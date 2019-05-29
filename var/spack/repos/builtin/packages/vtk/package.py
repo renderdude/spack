@@ -47,6 +47,7 @@ class Vtk(CMakePackage):
     # python3.7 compatibility patch backported from upstream
     # https://gitlab.kitware.com/vtk/vtk/commit/706f1b397df09a27ab8981ab9464547028d0c322
     patch('python3.7-const-char.patch', when='@:8.1.1 ^python@3.7:')
+    patch('exodus_name_length.patch', when='@8.1.1:')
 
     # The use of the OpenGL2 backend requires at least OpenGL Core Profile
     # version 3.2 or higher.
@@ -75,7 +76,7 @@ class Vtk(CMakePackage):
     depends_on('expat')
     depends_on('freetype')
     depends_on('glew')
-    depends_on('hdf5')
+    depends_on('hdf5+hl')
     depends_on('libjpeg')
     depends_on('jsoncpp')
     depends_on('libxml2')

@@ -1,0 +1,11 @@
+--- VTK-8.1.1/IO/Exodus/vtkExodusIIReader.cxx	2018-05-11 08:34:24.000000000 -0600
++++ VTK-8.1.1-mod/IO/Exodus/vtkExodusIIReader.cxx	2019-04-11 17:42:38.000000000 -0600
+@@ -5551,7 +5551,7 @@ int vtkExodusIIReader::RequestData(
+ 
+ int vtkExodusIIReader::GetMaxNameLength()
+ {
+-  return ex_inquire_int(this->Metadata->Exoid, EX_INQ_DB_MAX_USED_NAME_LENGTH);
++  return ex_inquire_int(this->Metadata->Exoid, EX_INQ_MAX_READ_NAME_LENGTH);
+ }
+ 
+ void vtkExodusIIReader::SetGenerateObjectIdCellArray( int x ) { this->Metadata->SetGenerateObjectIdArray( x ); }

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack import *
-from spack.operating_systems.mac_os import macos_version
+from spack.operating_systems.mac_os import macos_version, macos_sdk_path
 from llnl.util import tty
 
 import glob
@@ -189,6 +189,8 @@ class Gcc(AutotoolsPackage):
     if sys.platform == 'darwin':
         # Fix parallel build on APFS filesystem
         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81797
+        if macos_version() >= Version('10.14'):
+            patch('darwin/headers-10.14.4-fix.patch', when='@8.3')
         if macos_version() >= Version('10.13'):
             patch('darwin/apfs.patch', when='@5.5.0,6.1:6.4,7.1:7.3')
             # from homebrew via macports
@@ -314,6 +316,12 @@ class Gcc(AutotoolsPackage):
                                 spec['cuda'].libs.directories[0]),
                             '--disable-bootstrap',
                             '--disable-multilib'])
+
+        if sys.platform == 'darwin':
+            options.extend([
+                '--with-native-system-header-dir=/usr/include',
+                '--with-sysroot={0}'.format(macos_sdk_path())
+            ])
 
         return options
 
