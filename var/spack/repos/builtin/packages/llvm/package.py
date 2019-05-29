@@ -67,6 +67,7 @@ class Llvm(CMakePackage):
             description='CMake build type',
             values=('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel'))
     variant('python', default=False, description="Install python bindings")
+    variant('enable_dump', default=False, description="Pass ENABLE_DUMP to C/C++ flags")
     extends('python', when='+python')
 
     # Build dependency
@@ -77,6 +78,9 @@ class Llvm(CMakePackage):
     # Universal dependency
     depends_on('python@2.7:2.8', when='@:4.999+python')
     depends_on('python', when='@5:+python')
+    depends_on('git')
+    depends_on('googletest')
+    depends_on('py-lit', type=('build', 'run'))
 
     # openmp dependencies
     depends_on('perl-data-dumper', type=('build'))
@@ -602,6 +606,10 @@ class Llvm(CMakePackage):
     def setup_environment(self, spack_env, run_env):
         spack_env.append_flags('CXXFLAGS', self.compiler.cxx11_flag)
 
+        if '+enable_dump' in self.spec:
+            spack_env.append_flags('CXXFLAGS', '-DLLVM_ENABLE_DUMP')
+            spack_env.append_flags('CFLAGS', '-DLLVM_ENABLE_DUMP')
+
         if '+clang' in self.spec:
             run_env.set('CC', join_path(self.spec.prefix.bin, 'clang'))
             run_env.set('CXX', join_path(self.spec.prefix.bin, 'clang++'))
@@ -661,6 +669,9 @@ class Llvm(CMakePackage):
         if '+link_dylib' in spec:
             cmake_args.append('-DLLVM_LINK_LLVM_DYLIB:Bool=ON')
 
+        if '+enable_dump' in spec:
+            cmake_args.append('-DLLVM_ENABLE_ASSERTIONS:BOOL=ON')
+
         if '+all_targets' not in spec:  # all is default on cmake
 
             targets = ['NVPTX', 'AMDGPU']
@@ -698,6 +709,9 @@ class Llvm(CMakePackage):
                 # LLVMDemangle target was added in 4.0.0
                 make('install-LLVMDemangle')
             make('install-LLVMSupport')
+            if '+enable_dump' in self.spec:
+                make('FileCheck')
+
 
     @run_after('install')
     def post_install(self):
@@ -708,3 +722,5 @@ class Llvm(CMakePackage):
 
         with working_dir(self.build_directory):
             install_tree('bin', join_path(self.prefix, 'libexec', 'llvm'))
+            if '+enable_dump' in self.spec:
+                install('bin/FileCheck', self.prefix.bin)
