@@ -1,0 +1,267 @@
+diff -pur USD-19.05/cmake/defaults/Packages.cmake USD-19.05-mod/cmake/defaults/Packages.cmake
+--- USD-19.05/cmake/defaults/Packages.cmake	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/cmake/defaults/Packages.cmake	2019-05-31 13:48:08.000000000 -0600
+@@ -46,7 +46,7 @@ if(PXR_ENABLE_PYTHON_SUPPORT)
+     find_package(Boost
+         COMPONENTS
+             program_options
+-            python
++            python27
+         REQUIRED
+     )
+ 
+diff -pur USD-19.05/pxr/base/lib/plug/CMakeLists.txt USD-19.05-mod/pxr/base/lib/plug/CMakeLists.txt
+--- USD-19.05/pxr/base/lib/plug/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/base/lib/plug/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -8,7 +8,7 @@ pxr_library(plug
+         js
+         trace
+         work
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${TBB_tbb_LIBRARY}
+ 
+     INCLUDE_DIRS
+diff -pur USD-19.05/pxr/base/lib/tf/CMakeLists.txt USD-19.05-mod/pxr/base/lib/tf/CMakeLists.txt
+--- USD-19.05/pxr/base/lib/tf/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/base/lib/tf/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -13,7 +13,7 @@ pxr_library(tf
+         arch
+         ${WINLIBS}
+         ${PYTHON_LIBRARIES}
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${TBB_tbb_LIBRARY}
+ 
+     INCLUDE_DIRS
+@@ -229,7 +229,7 @@ if(PXR_ENABLE_PYTHON_SUPPORT)
+     pxr_build_test(testTfPyFunction
+         LIBRARIES
+             tf
+-            ${Boost_PYTHON_LIBRARY}
++            ${Boost_PYTHON27_LIBRARY}
+         CPPFILES
+             testenv/testTfPyFunction.cpp
+     ) 
+@@ -244,7 +244,7 @@ if(PXR_ENABLE_PYTHON_SUPPORT)
+     pxr_build_test(testTfPyLock
+         LIBRARIES
+             tf
+-            ${Boost_PYTHON_LIBRARY}
++            ${Boost_PYTHON27_LIBRARY}
+         CPPFILES
+             testenv/testTfPyLock.cpp
+     )
+@@ -252,7 +252,7 @@ if(PXR_ENABLE_PYTHON_SUPPORT)
+     pxr_build_test(testTfPyResultConversions
+         LIBRARIES
+             tf
+-            ${Boost_PYTHON_LIBRARY}
++            ${Boost_PYTHON27_LIBRARY}
+         CPPFILES
+             testenv/testTfPyResultConversions.cpp
+     )
+diff -pur USD-19.05/pxr/base/lib/trace/CMakeLists.txt USD-19.05-mod/pxr/base/lib/trace/CMakeLists.txt
+--- USD-19.05/pxr/base/lib/trace/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/base/lib/trace/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -6,7 +6,7 @@ pxr_library(trace
+         arch
+         js
+         tf
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${TBB_tbb_LIBRARY}
+ 
+     INCLUDE_DIRS
+diff -pur USD-19.05/pxr/base/lib/vt/CMakeLists.txt USD-19.05-mod/pxr/base/lib/vt/CMakeLists.txt
+--- USD-19.05/pxr/base/lib/vt/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/base/lib/vt/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -7,7 +7,7 @@ pxr_library(vt
+         tf
+         gf
+         trace
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${TBB_tbb_LIBRARY}
+ 
+     INCLUDE_DIRS
+diff -pur USD-19.05/pxr/imaging/lib/glf/CMakeLists.txt USD-19.05-mod/pxr/imaging/lib/glf/CMakeLists.txt
+--- USD-19.05/pxr/imaging/lib/glf/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/imaging/lib/glf/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -41,7 +41,7 @@ pxr_library(glf
+         tf
+         trace
+         sdf
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${OPENGL_gl_LIBRARY}
+         ${OPENGL_glu_LIBRARY}
+         ${GLEW_LIBRARY}
+diff -pur USD-19.05/pxr/usd/lib/ar/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/ar/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/ar/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/ar/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -7,7 +7,7 @@ pxr_library(ar
+         tf
+         plug
+         vt
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+ 
+     INCLUDE_DIRS
+         ${Boost_INCLUDE_DIRS}
+diff -pur USD-19.05/pxr/usd/lib/ndr/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/ndr/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/ndr/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/ndr/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -9,7 +9,7 @@ pxr_library(ndr
+         work
+         ar
+         sdf
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+ 
+     INCLUDE_DIRS
+         ${Boost_INCLUDE_DIRS}
+diff -pur USD-19.05/pxr/usd/lib/pcp/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/pcp/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/pcp/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/pcp/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -9,7 +9,7 @@ pxr_library(pcp
+         sdf
+         work
+         ar
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${TBB_tbb_LIBRARY}
+ 
+     INCLUDE_DIRS
+diff -pur USD-19.05/pxr/usd/lib/sdf/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/sdf/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/sdf/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/sdf/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -10,7 +10,7 @@ pxr_library(sdf
+         vt
+         work
+         ar
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+ 
+     INCLUDE_DIRS
+         ${Boost_INCLUDE_DIRS}
+diff -pur USD-19.05/pxr/usd/lib/sdr/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/sdr/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/sdr/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/sdr/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -8,7 +8,7 @@ pxr_library(sdr
+         ar
+         ndr
+         sdf
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+ 
+     INCLUDE_DIRS
+         ${Boost_INCLUDE_DIRS}
+diff -pur USD-19.05/pxr/usd/lib/usd/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/usd/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/usd/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/usd/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -13,7 +13,7 @@ pxr_library(usd
+         trace
+         vt
+         work
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${TBB_tbb_LIBRARY}
+ 
+     INCLUDE_DIRS
+diff -pur USD-19.05/pxr/usd/lib/usdGeom/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/usdGeom/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/usdGeom/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/usdGeom/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -11,7 +11,7 @@ pxr_library(usdGeom
+         trace
+         usd
+         work
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+ 
+     INCLUDE_DIRS
+         ${Boost_INCLUDE_DIRS}
+diff -pur USD-19.05/pxr/usd/lib/usdRi/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/usdRi/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/usdRi/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/usdRi/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -10,7 +10,7 @@ pxr_library(usdRi
+         usdShade
+         usdGeom
+         usdLux
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+ 
+     INCLUDE_DIRS
+         ${Boost_INCLUDE_DIRS}
+diff -pur USD-19.05/pxr/usd/lib/usdSkel/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/usdSkel/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/usdSkel/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/usdSkel/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -12,7 +12,7 @@ pxr_library(usdSkel
+         sdf
+         usd
+         usdGeom
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${TBB_tbb_LIBRARY}
+ 
+     INCLUDE_DIRS
+diff -pur USD-19.05/pxr/usd/lib/usdUtils/CMakeLists.txt USD-19.05-mod/pxr/usd/lib/usdUtils/CMakeLists.txt
+--- USD-19.05/pxr/usd/lib/usdUtils/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usd/lib/usdUtils/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -9,7 +9,7 @@ pxr_library(usdUtils
+         sdf
+         usd
+         usdGeom
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+ 
+     INCLUDE_DIRS
+         ${Boost_INCLUDE_DIRS}
+diff -pur USD-19.05/pxr/usdImaging/lib/usdImagingGL/CMakeLists.txt USD-19.05-mod/pxr/usdImaging/lib/usdImagingGL/CMakeLists.txt
+--- USD-19.05/pxr/usdImaging/lib/usdImagingGL/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usdImaging/lib/usdImagingGL/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -30,7 +30,7 @@ pxr_library(usdImagingGL
+         usdShade
+         usdImaging
+         ar
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${PYTHON_LIBRARY}
+         ${OPENGL_gl_LIBRARY}
+         ${OPENGL_glu_LIBRARY}
+diff -pur USD-19.05/pxr/usdImaging/lib/usdviewq/CMakeLists.txt USD-19.05-mod/pxr/usdImaging/lib/usdviewq/CMakeLists.txt
+--- USD-19.05/pxr/usdImaging/lib/usdviewq/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/pxr/usdImaging/lib/usdviewq/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -10,7 +10,7 @@ pxr_library(usdviewq
+         tf
+         usd
+         usdGeom
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+ 
+     INCLUDE_DIRS
+         ${Boost_INCLUDE_DIRS}
+diff -pur USD-19.05/third_party/maya/lib/usdMaya/CMakeLists.txt USD-19.05-mod/third_party/maya/lib/usdMaya/CMakeLists.txt
+--- USD-19.05/third_party/maya/lib/usdMaya/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/third_party/maya/lib/usdMaya/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -17,7 +17,7 @@ pxr_shared_library(${PXR_PACKAGE}
+         usdSkel
+         usdUtils
+         vt
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${MAYA_Foundation_LIBRARY}
+         ${MAYA_OpenMaya_LIBRARY}
+         ${MAYA_OpenMayaAnim_LIBRARY}
+diff -pur USD-19.05/third_party/maya/plugin/pxrUsdTranslators/CMakeLists.txt USD-19.05-mod/third_party/maya/plugin/pxrUsdTranslators/CMakeLists.txt
+--- USD-19.05/third_party/maya/plugin/pxrUsdTranslators/CMakeLists.txt	2019-04-09 15:14:34.000000000 -0600
++++ USD-19.05-mod/third_party/maya/plugin/pxrUsdTranslators/CMakeLists.txt	2019-05-31 13:47:27.000000000 -0600
+@@ -18,7 +18,7 @@ pxr_plugin(${PXR_PACKAGE}
+         usdSkel
+         usdUtils
+         vt
+-        ${Boost_PYTHON_LIBRARY}
++        ${Boost_PYTHON27_LIBRARY}
+         ${MAYA_LIBRARIES}
+ 
+     INCLUDE_DIRS
