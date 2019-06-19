@@ -38,7 +38,7 @@ class Ospray(CMakePackage):
     depends_on('embree')
     depends_on('ispc')
     depends_on('mpi', when='+mpi')
-    depends_on('openimageio', when='+oiio')
+    depends_on('openimageio@:1.8.15', when='+oiio')
 
     def cmake_args(self):
         # FIXME: Add arguments other than
