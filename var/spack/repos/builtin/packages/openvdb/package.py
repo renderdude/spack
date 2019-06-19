@@ -24,12 +24,15 @@ from spack import *
 
 
 class Openvdb(CMakePackage):
-    """FIXME: Put a proper description of your package here."""
+    """OpenVDB is an Academy Award-winning open-source C++ library comprising 
+       a novel hierarchical data structure and a suite of tools for the efficient 
+       storage and manipulation of sparse volumetric data discretized on 
+       three-dimensional grids."""
 
-    # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://www.openvdb.org"
     url      = "https://github.com/AcademySoftwareFoundation/openvdb/archive/v6.0.0.tar.gz"
 
+    version('6.1.0', sha256='d8803214c245cf0ca14a2c30cd215b183147c03c888c59fc642f213f98b4d68f')
     version('6.0.0', sha256='dbdf3048336444c402e5d3727c9bfb2e84454b8d0fd468ba92a8c7225e24b7b4')
     version('5.2.0', sha256='86b3bc51002bc25ae8d69991228228c79b040cb1a5803d87543b407645f6ab20')
     version('5.1.0', sha256='eb5a8011732bcdeb115de9a38f640ee376bcb85b54e060d3b1ab08f9dc92f40b')
@@ -44,13 +47,11 @@ class Openvdb(CMakePackage):
     depends_on('c-blosc')
     depends_on('cppunit')
     depends_on('glfw')
+    depends_on('pkg-config', type='build')
 
     def cmake_args(self):
-        # FIXME: Add arguments other than
-        # FIXME: CMAKE_INSTALL_PREFIX and CMAKE_BUILD_TYPE
-        # FIXME: If not needed delete this function
         args = ['-DBLOSC_LOCATION=%s' % self.spec['c-blosc'].prefix]
-        args.extend(['-DTBB_LOCATION=%s' % self.spec['intel-tbb'].prefix])
+        args.extend(['-DTBB_ROOT=%s' % self.spec['intel-tbb'].prefix])
         args.extend(['-DILMBASE_LOCATION=%s' % self.spec['ilmbase'].prefix])
         args.extend(['-DOPENEXR_LOCATION=%s' % self.spec['openexr'].prefix])
         args.extend(['-DOpenexr_ILMIMF_LIBRARY=%s/lib/libIlmImf.dylib' % self.spec['openexr'].prefix])
