@@ -13,12 +13,10 @@ class Qt(Package):
     """Qt is a comprehensive cross-platform C++ application framework."""
     homepage = 'http://qt.io'
     # Alternative location 'http://download.qt.io/official_releases/qt/'
-    url      = 'http://download.qt.io/archive/qt/5.12/5.12.0/single/qt-everywhere-src-5.12.0.tar.xz'
+    url      = 'http://download.qt.io/archive/qt/5.7/5.7.0/single/qt-everywhere-opensource-src-5.7.0.tar.gz'
     list_url = 'http://download.qt.io/archive/qt/'
     list_depth = 3
 
-    version('5.12.3', sha256='6462ac74c00ff466487d8ef8d0922971aa5b1d5b33c0753308ec9d57711f5a42')
-    version('5.12.2', sha256='59b8cb4e728450b21224dcaaa40eb25bafc5196b6988f2225c394c6b7f881ff5')
     version('5.11.3', '859417642713cee2493ee3646a7fee782c9f1db39e41d7bb1322bba0c5f0ff4d')
     version('5.11.2', 'c6104b840b6caee596fa9a35bc5f57f67ed5a99d6a36497b6fe66f990a53ca81')
     version('5.10.0', 'c5e275ab0ed7ee61d0f4b82cd471770d')
@@ -55,7 +53,7 @@ class Qt(Package):
 
     # fix installation of pkgconfig files
     # see https://github.com/Homebrew/homebrew-core/pull/5951
-    patch('restore-pc-files.patch', when='@5.9:@5.11 platform=darwin')
+    patch('restore-pc-files.patch', when='@5.9: platform=darwin')
 
     patch('qt3accept.patch', when='@3.3.8b')
     patch('qt3krell.patch', when='@3.3.8b+krellpatch')
@@ -84,7 +82,7 @@ class Qt(Package):
 
     # Fix build failure with newer versions of GCC
     patch('https://github.com/qt/qtbase/commit/a52d7861edfb5956de38ba80015c4dd0b596259b.patch',
-          sha256='e10c871033568a9aed982628ed627356761f72f63c5fdaf11882dc147528e9ed',
+          sha256='c49b228c27e3ad46ec3af4bac0e9985af5b5b28760f238422d32e14f98e49b1e',
           working_dir='qtbase',
           when='@5.10:5.12.0 %gcc@9:')
 
@@ -260,29 +258,19 @@ class Qt(Package):
             '-shared',
             '-confirm-license',
             '-openssl-linked',
-            '-I{0}'.format(self.spec['openssl'].prefix.include),
-            '-L{0}'.format(self.spec['openssl'].prefix.lib),
             '-optimized-qmake',
             '-system-freetype',
             '-I{0}/freetype2'.format(self.spec['freetype'].prefix.include),
             '-no-pch',
-            '-system-sqlite',
-            '-I{0}'.format(self.spec['sqlite'].prefix.include),
-            '-L{0}'.format(self.spec['sqlite'].prefix.lib),
+            '-system-sqlite'
         ]
 
         if self.spec.satisfies('@5:'):
             config_args.append('-system-harfbuzz')
-            config_args.append('-I{0}'.format(self.spec['harfbuzz'].prefix.include))
-            config_args.append('-L{0}'.format(self.spec['harfbuzz'].prefix.lib))
             config_args.append('-system-pcre')
-            config_args.append('-I{0}'.format(self.spec['pcre2'].prefix.include))
-            config_args.append('-L{0}'.format(self.spec['pcre2'].prefix.lib))
 
         if self.spec.satisfies('@5.7:'):
             config_args.append('-system-doubleconversion')
-            config_args.append('-I{0}'.format(self.spec['double-conversion'].prefix.include))
-            config_args.append('-L{0}'.format(self.spec['double-conversion'].prefix.lib))
 
         if sys.platform != 'darwin':
             config_args.append('-fontconfig')
@@ -293,14 +281,8 @@ class Qt(Package):
             # FIXME: those could work for other versions
             config_args.extend([
                 '-system-libpng',
-                '-I{0}'.format(self.spec['libpng'].prefix.include),
-                '-L{0}'.format(self.spec['libpng'].prefix.lib),
                 '-system-libjpeg',
-                '-I{0}'.format(self.spec['jpeg'].prefix.include),
-                '-L{0}'.format(self.spec['jpeg'].prefix.lib),
-                '-system-zlib',
-                '-I{0}'.format(self.spec['zlib'].prefix.include),
-                '-L{0}'.format(self.spec['zlib'].prefix.lib),
+                '-system-zlib'
             ])
 
         if '@:5.7.0' in self.spec:
@@ -326,10 +308,8 @@ class Qt(Package):
             config_args.append('-no-dbus')
 
         if '@5:' in self.spec and sys.platform == 'darwin':
-            if self.spec.satisfies('@:5.12.0'):
-                config_args.append('-no-xinput2')
-
             config_args.extend([
+                '-no-xinput2',
                 '-no-xcb-xlib',
                 '-no-pulseaudio',
                 '-no-alsa',
@@ -340,8 +320,8 @@ class Qt(Package):
         if '@4' in self.spec and sys.platform == 'darwin':
             config_args.append('-cocoa')
 
-            mac_ver = tuple(platform.mac_ver()[0].split('.')[:2])
-            sdkname = 'macosx%s' % '.'.join(mac_ver)
+            mac_ver = Version(platform.mac_ver()[0])
+            sdkname = 'macosx{0}'.format(mac_ver.up_to(2))
             sdkpath = which('xcrun')('--show-sdk-path',
                                      '--sdk', sdkname,
                                      output=str)
@@ -358,7 +338,7 @@ class Qt(Package):
                 use_clang_platform = True
             if use_clang_platform:
                 config_args.append('-platform')
-                if tuple(map(int, mac_ver)) >= (10, 9):
+                if mac_ver >= Version('10.9'):
                     config_args.append('unsupported/macx-clang-libc++')
                 else:
                     config_args.append('unsupported/macx-clang')
