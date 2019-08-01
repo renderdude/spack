@@ -39,8 +39,13 @@ class Openvdb(CMakePackage):
     version('5.0.0', sha256='1d39b711949360e0dba0895af9599d0606ca590f6de2d7c3a6251211fcc00348')
     version('4.0.2', sha256='7d995976cf124136b874d006496c37589f32de1b877ee7ccce626710823e8dbb')
 
-    # FIXME: Add dependencies if required.
-    depends_on('boost+python')
+    variant('python', default=False, description="Build python bindings")
+    extends('python', when='+python')
+    depends_on('py-numpy', when='+python', type=('build', 'run'))
+    patch('boost_numpy.patch', when='+python')
+
+    depends_on('boost', when='~python')
+    depends_on('boost+python+numpy', when='+python')
     depends_on('intel-tbb')
     depends_on('ilmbase')
     depends_on('openexr')
@@ -61,5 +66,8 @@ class Openvdb(CMakePackage):
         args.extend(['-DGLFW3_LOCATION=%s' % self.spec['glfw'].prefix])
         args.extend(['-DCMAKE_CXX_FLAGS=-fPIC -std=c++11'])
         args.extend(['-DOPENVDB_BUILD_UNITTESTS:BOOL=OFF'])
-        args.extend(['-DOPENVDB_BUILD_PYTHON_MODULE:BOOL=OFF'])
+        args += ["-DOPENVDB_BUILD_PYTHON_MODULE:BOOL={0}".format(
+            'ON' if '+python' in self.spec else 'OFF')]
+        args += ["-DUSE_NUMPY={0}".format(
+            'ON' if '+python' in self.spec else 'OFF')]
         return args

@@ -19,6 +19,8 @@ class FontUtil(AutotoolsPackage):
     depends_on('bdftopcf', type='build')
     depends_on('mkfontscale', type='build')
     depends_on('mkfontdir', type='build')
+    depends_on('autoconf', type='build')
+    depends_on('automake', type='build')
 
     font_baseurl = 'https://www.x.org/archive/individual/font/'
     fonts = []

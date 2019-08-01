@@ -1,0 +1,82 @@
+diff -pur openvdb-6.1.0/openvdb/python/CMakeLists.txt openvdb-6.1.0-mod/openvdb/python/CMakeLists.txt
+--- openvdb-6.1.0/openvdb/python/CMakeLists.txt	2019-05-07 14:58:35.000000000 -0600
++++ openvdb-6.1.0-mod/openvdb/python/CMakeLists.txt	2019-07-18 10:05:34.000000000 -0600
+@@ -71,6 +71,7 @@ endif()
+ 
+ set(OPENVDB_PYTHON_DEPS)
+ set(OPENVDB_PYTHON_INCLUDES)
++set(OPENVDB_BOOST_PYTHON_DEPS)
+ 
+ # If CMake is < 3.12, use the old style python search and alias the variables
+ # Note that the Interpreter component is only required for the python test
+@@ -112,13 +113,24 @@ endif()
+ # Boost python handling - try and find both python and pythonXx (version suffixed).
+ # Prioritize the version suffixed library, failing if neither exist.
+ 
+-find_package(Boost ${MINIMUM_BOOST_VERSION}
+-  QUIET COMPONENTS python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}
++if(USE_NUMPY)
++  find_package(Boost ${MINIMUM_BOOST_VERSION}
++    QUIET COMPONENTS python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}
++    numpy${Python_VERSION_MAJOR}${Python_VERSION_MINOR}
+ )
++else()
++  find_package(Boost ${MINIMUM_BOOST_VERSION}
++    QUIET COMPONENTS python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}
++  )
++endif()
+ 
+ if(TARGET Boost::python${Python_VERSION_MAJOR}${Python_VERSION_MINOR})
+   set(BOOST_PYTHON_LIB "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}")
+   message(STATUS "Found boost_python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}")
++  if(USE_NUMPY)
++    set(BOOST_NUMPY_LIB "numpy${Python_VERSION_MAJOR}${Python_VERSION_MINOR}")
++    message(STATUS "Found boost_numpy${Python_VERSION_MAJOR}${Python_VERSION_MINOR}")
++  endif()
+ else()
+   find_package(Boost ${MINIMUM_BOOST_VERSION}
+     QUIET COMPONENTS python
+@@ -128,6 +140,10 @@ else()
+     message(STATUS "Found non-suffixed boost_python, assuming to be python version "
+       "\"${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}\" compatible"
+     )
++    if(USE_NUMPY)
++      set(BOOST_NUMPY_LIB "numpy")
++      message(STATUS "Found boost_numpy")
++    endif()
+   else()
+     message(FATAL_ERROR "Unable to find boost_python or "
+       "boost_python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}."
+@@ -135,9 +151,14 @@ else()
+   endif()
+ endif()
+ 
++if(USE_NUMPY)
++  list(APPEND OPENVDB_BOOST_PYTHON_DEPS Boost::${BOOST_NUMPY_LIB})
++endif()
++list(APPEND OPENVDB_BOOST_PYTHON_DEPS Boost::${BOOST_PYTHON_LIB})
++
+ set(OPENVDB_PYTHON_DEPENDENT_LIBS
+   ${OPENVDB_LIB}
+-  Boost::${BOOST_PYTHON_LIB}
++  ${OPENVDB_BOOST_PYTHON_DEPS}
+   ${OPENVDB_PYTHON_DEPS}
+ )
+ 
+@@ -156,7 +177,7 @@ set(OPENVDB_PYTHON_MODULE_SOURCE_FILES
+ 
+ if(NOT DEFINED PYOPENVDB_INSTALL_DIRECTORY)
+   set(PYOPENVDB_INSTALL_DIRECTORY
+-    lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}
++    lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages
+     CACHE STRING "The directory to install the pyopenvdb.so module."
+   )
+ endif()
+@@ -183,6 +204,7 @@ target_link_libraries(pyopenvdb
+ 
+ set_target_properties(pyopenvdb PROPERTIES
+   PREFIX ""
++  SUFFIX .so
+ )
+ 
+ if(OPENVDB_ENABLE_RPATH)
