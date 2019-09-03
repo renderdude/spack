@@ -13,11 +13,12 @@ class Openimageio(CMakePackage):
     homepage = "http://www.openimageio.org"
     url      = "https://github.com/OpenImageIO/oiio/archive/Release-1.8.15.tar.gz"
 
-    version('2.1.1-dev', sha256='339fb61e4a2b20f9e3d1facfb6a66e74163a718f9c1684ee33cb7c3b0cb0b55a')
-    version('2.1.0-dev', sha256='4062181be521faca57bf95915ca4c6829773a1128cb341ac95d9db1d47018343')
-    version('2.0.8',     sha256='3c4794b0e8674728389363de291bada25ff86b4a6f5582380ed2def1ca2e07ae')
-    version('2.0.7',     sha256='3abe7e09c9d4e17e357c31c3cb856aea1fa7f79ab24f1fbe0bd46fd8fbd8c769')
-    version('1.8.15', sha256='4d5b4ed3f2daaed69989f53c0f9364dd87c82dc0a09807b5b6e9008e2426e86f')
+    version('2.3.1.1-dev', sha256='5cd2ef13ac7af65fd0e6a855da9153ca1e32ed44f9ba093ace1ccc2006772378')
+    version('2.1.3-dev',   sha256='3d497c4d4eec901115d9d8dc308f91bbd8e63ffe6746a8960b06376afa96d126')
+    version('2.1.2-dev',   sha256='f3dc1e1092b5ade130448a5064c3851ecbb6f36100254a2bd4a1eb06b34d2f04')
+    version('2.0.10',      sha256='b9c4cb3754cfcf2b03707331c23d5b799a185deccbbc7b8768e0d4e10a535375')
+    version('2.0.9',       sha256='0cc7f8db831482ada4f7c7f97859eb4db6b0fc3626100f94a89053da1e1a8615')
+    version('1.8.15',      sha256='4d5b4ed3f2daaed69989f53c0f9364dd87c82dc0a09807b5b6e9008e2426e86f')
 
     # Core dependencies
     depends_on('cmake@3.2.2:', type='build')
