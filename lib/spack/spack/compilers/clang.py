@@ -81,6 +81,10 @@ class Clang(Compiler):
         ver_string = str(self.version)
         return ver_string.endswith('-apple')
 
+    @classmethod
+    def verbose_flag(cls):
+        return "-v"
+
     @property
     def openmp_flag(self):
         if self.is_apple:
@@ -173,6 +177,8 @@ class Clang(Compiler):
     def pic_flag(self):
         return "-fPIC"
 
+    required_libs = ['libclang']
+
     @classmethod
     @llnl.util.lang.memoized
     def default_version(cls, comp):
@@ -199,9 +205,10 @@ class Clang(Compiler):
         ver = 'unknown'
         match = re.search(
             # Apple's LLVM compiler has its own versions, so suffix them.
-            r'^Apple LLVM version ([^ )]+)|'
+            r'^Apple (?:LLVM|clang) version ([^ )]+)|'
             # Normal clang compiler versions are left as-is
             r'clang version ([^ )]+)-svn[~.\w\d-]*|'
+            r'clang version ([^ )]+)-[~.\w\d-]*|'
             r'clang version ([^ )]+)',
             output
         )
