@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -47,7 +47,7 @@ class syaml_str(str):
 
 
 class syaml_int(int):
-    __repr__ = str.__repr__
+    __repr__ = int.__repr__
 
 
 #: mapping from syaml type -> primitive type
