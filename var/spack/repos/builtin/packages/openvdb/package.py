@@ -32,6 +32,9 @@ class Openvdb(CMakePackage):
     homepage = "https://www.openvdb.org"
     url      = "https://github.com/AcademySoftwareFoundation/openvdb/archive/v6.0.0.tar.gz"
 
+    version('7.0.0', sha256='97bc8ae35ef7ccbf49a4e25cb73e8c2eccae6b235bac86f2150707efcd1e910d')
+    version('6.2.1', sha256='d4dd17ad571d4dd048f010e6f4b7657391960ed73523ed1716a17e7cf1806f71')
+    version('6.2.0', sha256='a2069255b2408b56900d8d4552a9804df7974aecbdd16aad3223d22088c72a43')
     version('6.1.0', sha256='d8803214c245cf0ca14a2c30cd215b183147c03c888c59fc642f213f98b4d68f')
     version('6.0.0', sha256='dbdf3048336444c402e5d3727c9bfb2e84454b8d0fd468ba92a8c7225e24b7b4')
     version('5.2.0', sha256='86b3bc51002bc25ae8d69991228228c79b040cb1a5803d87543b407645f6ab20')
@@ -42,7 +45,7 @@ class Openvdb(CMakePackage):
     variant('python', default=False, description="Build python bindings")
     extends('python', when='+python')
     depends_on('py-numpy', when='+python', type=('build', 'run'))
-    patch('boost_numpy.patch', when='+python')
+    #patch('boost_numpy.patch', when='+python')
 
     depends_on('boost', when='~python')
     depends_on('boost+python+numpy', when='+python')
