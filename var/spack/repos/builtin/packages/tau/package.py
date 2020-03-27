@@ -68,7 +68,7 @@ class Tau(Package):
     variant('fortran', default=darwin_default, description='Activates Fortran support')
     variant('io', default=True, description='Activates POSIX I/O support')
     variant('adios2', default=False, description='Activates ADIOS2 output support')
-    variant('sqlite', default=True, description='Activates SQLite3 output support')
+    variant('sqlite', default=False, description='Activates SQLite3 output support')
 
     # Support cross compiling.
     # This is a _reasonable_ subset of the full set of TAU
@@ -87,7 +87,7 @@ class Tau(Package):
     depends_on('libdwarf', when='+libdwarf')
     depends_on('libelf', when='+libdwarf')
     # TAU requires the ELF header support, libiberty and demangle.
-    depends_on('binutils+libiberty+headers~nls', when='+binutils')
+    depends_on('binutils@:2.33.1+libiberty+headers~nls', when='+binutils')
     depends_on('python@2.7:', when='+python')
     depends_on('libunwind', when='+libunwind')
     depends_on('mpi', when='+mpi', type=('build', 'run', 'link'))
@@ -95,12 +95,15 @@ class Tau(Package):
     depends_on('gasnet', when='+gasnet')
     depends_on('adios2', when='+adios2')
     depends_on('sqlite', when='+sqlite')
+    depends_on('hwloc')
 
     # Elf only required from 2.28.1 on
     conflicts('+libelf', when='@:2.28.0')
     conflicts('+libdwarf', when='@:2.28.0')
 
-    filter_compiler_wrappers('tau_cc.sh', 'Makefile.tau', relative_root='bin')
+    # ADIOS2, SQLite only available from 2.29.1 on
+    conflicts('+adios2', when='@:2.29.1')
+    conflicts('+sqlite', when='@:2.29.1')
 
     def set_compiler_options(self, spec):
 
@@ -267,11 +270,15 @@ class Tau(Package):
         compiler_specific_options = self.set_compiler_options(spec)
         options.extend(compiler_specific_options)
         configure(*options)
+
         make("install")
 
         # Link arch-specific directories into prefix since there is
         # only one arch per prefix the way spack installs.
         self.link_tau_arch_dirs()
+        # TAU may capture Spack's internal compiler wrapper. Replace
+        # it with the correct compiler.
+        self.fix_tau_compilers()
 
     def link_tau_arch_dirs(self):
         for subdir in os.listdir(self.prefix):
@@ -280,6 +287,22 @@ class Tau(Package):
                 dest = join_path(self.prefix, d)
                 if os.path.isdir(src) and not os.path.exists(dest):
                     os.symlink(join_path(subdir, d), dest)
+
+    def fix_tau_compilers(self):
+        filter_file('FULL_CC=' + spack_cc, 'FULL_CC=' + self.compiler.cc,
+                    self.prefix + '/include/Makefile', backup=False,
+                    string=True)
+        filter_file('FULL_CXX=' + spack_cxx, 'FULL_CXX=' +
+                    self.compiler.cxx, self.prefix + '/include/Makefile',
+                    backup=False, string=True)
+        for makefile in os.listdir(self.prefix.lib):
+            if makefile.startswith('Makefile.tau'):
+                filter_file('FULL_CC=' + spack_cc, 'FULL_CC=' +
+                            self.compiler.cc, self.prefix.lib + "/" +
+                            makefile, backup=False, string=True)
+                filter_file('FULL_CXX=' + spack_cxx, 'FULL_CXX=' +
+                            self.compiler.cxx, self.prefix.lib +
+                            "/" + makefile, backup=False, string=True)
 
     def setup_run_environment(self, env):
         pattern = join_path(self.prefix.lib, 'Makefile.*')
