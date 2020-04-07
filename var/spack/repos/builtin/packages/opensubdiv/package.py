@@ -5,7 +5,7 @@
 
 
 from spack import *
-
+import sys
 
 class Opensubdiv(CMakePackage, CudaPackage):
     """OpenSubdiv is a set of open source libraries that
@@ -23,6 +23,7 @@ class Opensubdiv(CMakePackage, CudaPackage):
 
     variant('tbb', default=False, description='Builds with Intel TBB support')
     variant('openmp', default=False, description='Builds with OpenMP support')
+    variant('ptex', default=False, description='Builds with PTex support')
     variant('doc', default=False, description='Builds documentation. Requires Python 2')
 
     depends_on('cmake@2.8.6:', type='build')
@@ -34,10 +35,12 @@ class Opensubdiv(CMakePackage, CudaPackage):
     depends_on('glew@1.9.0:')
     depends_on('glfw@3.0.0:')
     depends_on('intel-tbb@4.0:', when='+tbb')
-    depends_on('libxrandr')
-    depends_on('libxcursor')
-    depends_on('libxinerama')
     depends_on('llvm-openmp', when='+openmp')
+    depends_on('ptex@develop', when='+ptex')
+
+    depends_on('libxrandr', when=sys.platform != 'darwin')
+    depends_on('libxcursor', when=sys.platform != 'darwin')
+    depends_on('libxinerama', when=sys.platform != 'darwin')
 
     def cmake_args(self):
         spec = self.spec
@@ -46,13 +49,15 @@ class Opensubdiv(CMakePackage, CudaPackage):
         args.append('-DNO_EXAMPLES=1')    # disable examples build
         args.append('-DNO_TUTORIALS=1')   # disable tutorials build
         args.append('-DNO_REGRESSION=1')  # disable regression tests build
-        args.append('-DNO_PTEX=1')        # disable PTex support
         args.append('-DNO_OPENCL=1')      # disable OpenCL
         args.append('-DNO_CLEW=1')        # disable CLEW wrapper library
-        args.append('-DNO_METAL=1')       # disable Metal
+
+        if 'darwin' in self.spec.architecture:
+            args.append('-DNO_METAL=0')       # disable Metal
 
         args.append('-DNO_OPENGL=0')      # OpenGL always on
         args.append('-DGLEW_LOCATION={0}'.format(spec['glew'].prefix))
+        args.append('-DGLFW_LOCATION={0}'.format(self.spec['glfw'].prefix))
 
         if '+cuda' in spec:
             args.append('-DNO_CUDA=0')
@@ -67,8 +72,15 @@ class Opensubdiv(CMakePackage, CudaPackage):
         else:
             args.append('-DNO_CUDA=1')
 
+        if '+ptex' in spec:
+            args.append('-DNO_PTEX=0')
+            args.append('-DPTEX_LOCATION=%{0}'.format(self.spec['ptex'].prefix))
+        else:
+            args.append('-DNO_PTEX=1')
+
         if '+tbb' in spec:
             args.append('-DNO_TBB=0')
+            args.append('-DTBB_LOCATION={0}'.format(self.spec['intel-tbb'].prefix))
         else:
             args.append('-DNO_TBB=1')
 

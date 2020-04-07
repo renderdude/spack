@@ -33,6 +33,7 @@ class Usd(CMakePackage):
     git      = "https://github.com/PixarAnimationStudios/USD.git"
 
     version('develop',   branch='dev')
+    version('20.02', sha256='b70e2d4e21be24246215d2d2c0c90c66a2627b54e3d450fbbd6193d1284c6734')
     version('19.07', sha256='e3fdfccdaa18f72563a31bb5c397048910edbddbf62b451fcea8c104fe76a0fd')
     version('19.05', sha256='4ffc67435fc4d6dad4a337a7ec8da5715f225c37ee30354434453072e95dfbac')
     version('19.03', sha256='86a3bd3875e7b0b27de2e120fa8149e398d9adb081771db8d28a3799fff35bbe')
@@ -43,17 +44,18 @@ class Usd(CMakePackage):
     variant('python', default=True, description='Enable Python binding')
     variant('houdini', default=False, description='Build Houdini plugin')
 
-    patch('boost_168.patch', when='^boost@1.68:')
-    patch('find_houdini.patch', when='@develop +houdini')
-    patch('houdini_plugin.patch', when='@develop +houdini')
+    patch('boost_168.patch', when='@19.05 ^boost@1.68:')
+    patch('boost_168.20_02.patch', when='@20.02 ^boost@1.68:')
+    #patch('find_houdini.patch', when='@develop +houdini')
+    #patch('houdini_plugin.patch', when='@develop +houdini')
 
-    depends_on('python', when='+python')
+    depends_on('python@2.6:2.999', when='+python')
     depends_on('intel-tbb')
     depends_on('boost@:1.68')
     depends_on('opensubdiv@develop')
     depends_on('openexr')
     depends_on('openimageio@1.8.15')
-    depends_on('ptex')
+    depends_on('ptex@develop')
     depends_on('glew')
     depends_on('py-pyside2')
 

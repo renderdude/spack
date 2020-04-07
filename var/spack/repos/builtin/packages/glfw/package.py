@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack import *
-
+import sys
 
 class Glfw(CMakePackage):
     """GLFW is an Open Source, multi-platform library for
@@ -26,14 +26,28 @@ class Glfw(CMakePackage):
     version('3.0.4', sha256='a4e7c57db2086803de4fc853bd472ff8b6d2639b9aa16e6ac6b19ffb53958caf')
     version('3.0.3', sha256='7a182047ba6b1fdcda778b79aac249bb2328b6d141188cb5df29560715d01693')
 
-    depends_on('libxrandr')
-    depends_on('libxinerama')
-    depends_on('libxcursor')
-    depends_on('libxdamage')
-    depends_on('libxft')
-    depends_on('libxi')
-    depends_on('libxmu')
-    depends_on('freetype')
-    depends_on('fontconfig')
-    depends_on('doxygen', type='build')
+    variant('shared', default=True, description="Build as shared library")
+    variant('doc', default=False, description='Builds documentation. Requires Python 2')
+
+    depends_on('libxdamage', when=sys.platform != 'darwin')
+    depends_on('libxft', when=sys.platform != 'darwin')
+    depends_on('libxmu', when=sys.platform != 'darwin')
+    depends_on('freetype', when=sys.platform != 'darwin')
+    depends_on('fontconfig', when=sys.platform != 'darwin')
+    depends_on('libxrandr', when=sys.platform != 'darwin')
+    depends_on('libxinerama', when=sys.platform != 'darwin')
+    depends_on('libxi', when=sys.platform != 'darwin')
+    depends_on('libxcursor', when=sys.platform != 'darwin')
+
+    depends_on('graphviz', type='build', when='+doc')
+    depends_on('doxygen', type='build', when='+doc')
+    depends_on('py-docutils', type='build', when='+doc')
+    depends_on('python@2.6:2.999', type='build', when='+doc')
     depends_on('pkgconfig', type='build')
+    depends_on('opengl')
+
+    def cmake_args(self):
+        args = []
+        if '+shared' in self.spec:
+            args.append('-DBUILD_SHARED_LIBS=ON')
+        return args
