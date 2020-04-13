@@ -33,7 +33,9 @@ class Usd(CMakePackage):
     git      = "https://github.com/PixarAnimationStudios/USD.git"
 
     version('develop',   branch='dev')
+    version('20.05-rc2', sha256='7e3d6d01c072ea0c105fac2e35210e3266015b7969cb6abb2e78a181d0b64c30')
     version('20.02', sha256='b70e2d4e21be24246215d2d2c0c90c66a2627b54e3d450fbbd6193d1284c6734')
+    version('19.11', sha256='84f3bb123f7950b277aace096d678c8876737add0ed0b6ccb77cabb4f32dbcb0')
     version('19.07', sha256='e3fdfccdaa18f72563a31bb5c397048910edbddbf62b451fcea8c104fe76a0fd')
     version('19.05', sha256='4ffc67435fc4d6dad4a337a7ec8da5715f225c37ee30354434453072e95dfbac')
     version('19.03', sha256='86a3bd3875e7b0b27de2e120fa8149e398d9adb081771db8d28a3799fff35bbe')
@@ -42,14 +44,12 @@ class Usd(CMakePackage):
     version('18.09', sha256='7f5b7905c976cc7a1983ef9dfd8f298366872e1b4d6dcd2f05a2e55f4057da75')
 
     variant('python', default=True, description='Enable Python binding')
-    variant('houdini', default=False, description='Build Houdini plugin')
+    variant('renderman', default=False, description='Enable Hydra backend for RenderMan')
 
-    patch('boost_168.patch', when='@19.05 ^boost@1.68:')
-    patch('boost_168.20_02.patch', when='@20.02 ^boost@1.68:')
-    #patch('find_houdini.patch', when='@develop +houdini')
-    #patch('houdini_plugin.patch', when='@develop +houdini')
+#    patch('boost_168.patch', when='@:19.11^boost@1.68:')
+#    patch('v20.02_boost_168.patch', when='@20.02:^boost@1.68:')
 
-    depends_on('python@2.6:2.999', when='+python')
+    depends_on('python', when='+python')
     depends_on('intel-tbb')
     depends_on('boost@:1.68')
     depends_on('opensubdiv@develop')
@@ -77,9 +77,10 @@ class Usd(CMakePackage):
                 '-DPYTHON_LIBRARY={0}'.format(python_lib),
                 '-DPYTHON_INCLUDE_DIR={0}'.format(python_include_dir),
             ])
-        if '+houdini' in self.spec:
-            if 'HOUDINI_ROOT' in os.environ:
-                args.extend(['-DPXR_BUILD_HOUDINI_PLUGIN=TRUE'])
+        if '+renderman' in self.spec:
+            if 'RMANTREE' in os.environ:
+                args.extend(['-DPXR_BUILD_PRMAN_PLUGIN=TRUE'])
+                args.extend(['-DRENDERMAN_LOCATION=%s' % os.environ['RMANTREE']])
             else:
                 raise InstallError('Must have HOUDINI_ROOT set with +houdini')
 
