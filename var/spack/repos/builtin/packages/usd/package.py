@@ -33,7 +33,7 @@ class Usd(CMakePackage):
     git      = "https://github.com/PixarAnimationStudios/USD.git"
 
     version('develop',   branch='dev')
-    version('20.05-rc2', sha256='7e3d6d01c072ea0c105fac2e35210e3266015b7969cb6abb2e78a181d0b64c30')
+    version('20.05', sha256='622403872f530fe7d9d291dc8a98132c5bc979f64b82b834718d4e26aacfb9fd')
     version('20.02', sha256='b70e2d4e21be24246215d2d2c0c90c66a2627b54e3d450fbbd6193d1284c6734')
     version('19.11', sha256='84f3bb123f7950b277aace096d678c8876737add0ed0b6ccb77cabb4f32dbcb0')
     version('19.07', sha256='e3fdfccdaa18f72563a31bb5c397048910edbddbf62b451fcea8c104fe76a0fd')
@@ -51,8 +51,8 @@ class Usd(CMakePackage):
 
     depends_on('python', when='+python')
     depends_on('intel-tbb')
-    depends_on('boost@:1.68')
-    depends_on('opensubdiv@develop')
+    depends_on('boost@1.70:')
+    depends_on('opensubdiv')
     depends_on('openexr')
     depends_on('openimageio@1.8.15')
     depends_on('ptex@develop')
@@ -73,6 +73,7 @@ class Usd(CMakePackage):
             python_lib = self.spec['python'].libs[0]
             python_include_dir = self.spec['python'].headers.directories[0]
             args.extend([
+                '-DPXR_USE_PYTHON_3=ON',
                 '-DPYTHON_EXECUTABLE={0}'.format(python_exe),
                 '-DPYTHON_LIBRARY={0}'.format(python_lib),
                 '-DPYTHON_INCLUDE_DIR={0}'.format(python_include_dir),

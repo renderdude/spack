@@ -90,7 +90,10 @@ class Glib(Package):
             else:
                 args.append('-Dlibmount=false')
         if 'libc' in self.spec:
-            args.append('-Diconv=libc')
+            if self.spec.satisfies('platform=darwin'):
+                args.append('-Diconv=external')
+            else:
+                args.append('-Diconv=libc')
         else:
             if self.spec.satisfies('@2.61.0:'):
                 args.append('-Diconv=external')
