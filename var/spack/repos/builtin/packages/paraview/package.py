@@ -47,11 +47,20 @@ class Paraview(CMakePackage, CudaPackage):
     variant('hdf5', default=False, description="Use external HDF5")
     variant('shared', default=True,
             description='Builds a shared version of the library')
+    variant('kits', default=True,
+            description='Use module kits')
+    variant('egl', default=False, description="Enable EGL")
 
     conflicts('+python', when='+python3')
     conflicts('+python', when='@5.6:')
     conflicts('+python3', when='@:5.5')
     conflicts('+shared', when='+cuda')
+    # Legacy rendering dropped in 5.5
+    # See commit: https://gitlab.kitware.com/paraview/paraview/-/commit/798d328c
+    conflicts('~opengl2', when='@5.5:')
+
+    conflicts('+egl', when='+osmesa')
+    conflicts('+egl', when='+qt')
 
     # Workaround for
     # adding the following to your packages.yaml
@@ -84,6 +93,10 @@ class Paraview(CMakePackage, CudaPackage):
     depends_on('mesa+osmesa', when='+osmesa')
     depends_on('gl@3.2:', when='+opengl2')
     depends_on('gl@1.2:', when='~opengl2')
+
+    depends_on('glx', when='~osmesa platform=linux')
+    depends_on('egl', when='+egl')
+
     depends_on('libxt', when='~osmesa platform=linux')
     conflicts('+qt', when='+osmesa')
 
@@ -203,7 +216,9 @@ class Paraview(CMakePackage, CudaPackage):
         cmake_args = [
             '-DPARAVIEW_BUILD_QT_GUI:BOOL=%s' % variant_bool('+qt'),
             '-DVTK_OPENGL_HAS_OSMESA:BOOL=%s' % variant_bool('+osmesa'),
-            '-DVTK_USE_X:BOOL=%s' % nvariant_bool('+osmesa'),
+            '-DVTK_OPENGL_HAS_EGL:BOOL=%s' % variant_bool('+egl'),
+            ('-DVTK_USE_X:BOOL=%s' %
+                variant_bool('~osmesa ~egl platform=linux')),
             '-DVTK_RENDERING_BACKEND:STRING=%s' % rendering,
             '-DPARAVIEW_INSTALL_DEVELOPMENT_FILES:BOOL=%s' % includes,
             '-DBUILD_TESTING:BOOL=OFF',
@@ -267,9 +282,19 @@ class Paraview(CMakePackage, CudaPackage):
 
         if 'darwin' in spec.architecture:
             cmake_args.extend([
-                '-DVTK_USE_X:BOOL=OFF',
                 '-DPARAVIEW_DO_UNIX_STYLE_INSTALLS:BOOL=ON',
             ])
+
+        if '+kits' in spec:
+            if spec.satisfies('@5.0:5.6'):
+                cmake_args.append(
+                    '-DVTK_ENABLE_KITS:BOOL=ON')
+            elif spec.satisfies('@5.7'):
+                cmake_args.append(
+                    '-DPARAVIEW_ENABLE_KITS:BOOL=ON')
+            else:
+                cmake_args.append(
+                    '-DPARAVIEW_BUILD_WITH_KITS:BOOL=ON')
 
         # Hide git from Paraview so it will not use `git describe`
         # to find its own version number
