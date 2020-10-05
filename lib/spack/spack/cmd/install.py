@@ -45,6 +45,7 @@ def update_kwargs_from_args(args, kwargs):
         'explicit': True,  # Always true for install command
         'stop_at': args.until,
         'unsigned': args.unsigned,
+        'full_hash_match': args.full_hash_match,
     })
 
     kwargs.update({
@@ -108,6 +109,11 @@ the dependencies"""
         dest='unsigned', default=False,
         help="do not check signatures of binary packages")
     subparser.add_argument(
+        '--require-full-hash-match', action='store_true',
+        dest='full_hash_match', default=False, help="""when installing from
+binary mirrors, do not install binary package unless the full hash of the
+remote spec matches that of the local spec""")
+    subparser.add_argument(
         '--show-log-on-error', action='store_true',
         help="print full build log to stderr if build fails")
     subparser.add_argument(
@@ -160,8 +166,15 @@ packages. If neither are chosen, don't run tests for any packages."""
         action='store_true',
         help="Show usage instructions for CDash reporting"
     )
+    subparser.add_argument(
+        '-y', '--yes-to-all',
+        action='store_true',
+        dest='yes_to_all',
+        help="""assume "yes" is the answer to every confirmation request.
+To run completely non-interactively, also specify '--no-checksum'."""
+    )
     add_cdash_args(subparser, False)
-    arguments.add_common_arguments(subparser, ['yes_to_all', 'spec'])
+    arguments.add_common_arguments(subparser, ['spec'])
 
 
 def add_cdash_args(subparser, add_help):
