@@ -1112,11 +1112,12 @@ class Database(object):
             # the original hash of concrete specs.
             new_spec._mark_concrete()
             new_spec._hash = key
-            new_spec._full_hash = spec._full_hash
 
         else:
-            # If it is already there, mark it as installed.
+            # If it is already there, mark it as installed and update
+            # installation time
             self._data[key].installed = True
+            self._data[key].installation_time = _now()
 
         self._data[key].explicit = explicit
 
