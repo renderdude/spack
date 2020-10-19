@@ -50,8 +50,9 @@ class Openimageio(CMakePackage):
             'ON' if '+python' in self.spec else 'OFF')]
         args += ["-DUSE_QT={0}".format('ON' if '+qt' in self.spec else 'OFF')]
 
-        mac_ver = tuple(platform.mac_ver()[0].split('.')[:2])
-        if tuple(map(int, mac_ver)) >= (10, 13):
-            args.extend(['-DCMAKE_CXX_FLAGS=-DGL_SILENCE_DEPRECATION'])
+        if 'darwin' in sys.platform:
+            mac_ver = tuple(platform.mac_ver()[0].split('.')[:2])
+            if tuple(map(int, mac_ver)) >= (10, 13):
+                args.extend(['-DCMAKE_CXX_FLAGS=-DGL_SILENCE_DEPRECATION'])
             
         return args
