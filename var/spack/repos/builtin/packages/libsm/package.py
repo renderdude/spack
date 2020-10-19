@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import sys
 from spack import *
 
 
@@ -16,10 +17,15 @@ class Libsm(AutotoolsPackage, XorgPackage):
     version('1.2.2', sha256='14bb7c669ce2b8ff712fbdbf48120e3742a77edcd5e025d6b3325ed30cf120f4')
 
     depends_on('libice@1.0.5:')
-    depends_on('libuuid')
 
     depends_on('xproto', type='build')
     depends_on('xtrans', type='build')
     depends_on('pkgconfig', type='build')
     depends_on('util-macros', type='build')
-    depends_on('libuuid')
+    if sys.platform != 'darwin':
+        # On macOS systems, Spack's libuuid conflicts with the system-installed
+        # version and breaks anything linked against Cocoa/Carbon. Since the
+        # system-provided version is sufficient to build Python's UUID support,
+        # the easy solution is to only depend on Spack's libuuid when *not* on
+        # a Mac.
+        depends_on('libuuid')

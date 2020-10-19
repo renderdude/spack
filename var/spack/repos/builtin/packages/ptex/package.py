@@ -31,7 +31,7 @@ class Ptex(MakefilePackage):
     git      = "https://github.com/wdas/ptex.git"
 
     # FIXME: Add proper versions and checksums here.
-    version('develop', branch='master')
+    version('develop', branch='main')
     version('2.3.2',   sha256='30aeb85b965ca542a8945b75285cd67d8e207d23dbb57fcfeaab587bb443402b')
     version('2.3.1',   sha256='126ab1f55f1e6a59e5b70860924ddda0254d3202b2fbddd4852c3f5c0da1cd56')
     version('2.3.0.1', sha256='baae4307983231fbe31c7de5c59e08e813de12924c0c89f41bea05d6000d4cf5')

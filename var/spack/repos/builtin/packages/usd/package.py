@@ -33,6 +33,7 @@ class Usd(CMakePackage):
     git      = "https://github.com/PixarAnimationStudios/USD.git"
 
     version('develop',   branch='dev')
+    version('20.08', sha256='cd2a08490a9c8a28fa365950d94d4cd2ac332e5bb26c82dd1a3e52db11ee0f32')
     version('20.05', sha256='622403872f530fe7d9d291dc8a98132c5bc979f64b82b834718d4e26aacfb9fd')
     version('20.02', sha256='b70e2d4e21be24246215d2d2c0c90c66a2627b54e3d450fbbd6193d1284c6734')
     version('19.11', sha256='84f3bb123f7950b277aace096d678c8876737add0ed0b6ccb77cabb4f32dbcb0')

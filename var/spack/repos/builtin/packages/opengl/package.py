@@ -87,7 +87,7 @@ class Opengl(Package):
 
     @property
     def libs(self):
-        for dir in ['lib64', 'lib']:
+        for dir in ['lib64', 'lib', 'Libraries']:
             libs = find_libraries('libGL', join_path(self.prefix, dir),
                                   shared=True, recursive=False)
             if libs:

@@ -39,6 +39,7 @@ class Vtk(CMakePackage):
     variant('xdmf', default=False, description='Build XDMF file support')
     variant('ffmpeg', default=False, description='Build with FFMPEG support')
     variant('mpi', default=True, description='Enable MPI support')
+    variant('rendering', default=True, description='Enable parallel rendering support')
 
     patch('gcc.patch', when='@6.1.0')
 
@@ -171,6 +172,9 @@ class Vtk(CMakePackage):
 
         if '+ffmpeg' in spec:
             cmake_args.extend(['-DModule_vtkIOFFMPEG:BOOL=ON'])
+
+        if '+rendering' in spec:
+            cmake_args.extend(['-DModule_vtkRenderingParallel:BOOL=ON'])
 
         # Enable/Disable wrappers for Python.
         if '+python' in spec:
