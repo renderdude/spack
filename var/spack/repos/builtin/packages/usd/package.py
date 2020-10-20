@@ -55,7 +55,7 @@ class Usd(CMakePackage):
     depends_on('boost@1.70:')
     depends_on('opensubdiv')
     depends_on('openexr')
-    depends_on('openimageio@1.8.15')
+    depends_on('openimageio')
     depends_on('ptex@develop')
     depends_on('glew')
     depends_on('py-pyside2')
