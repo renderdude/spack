@@ -6,7 +6,7 @@
 from spack import *
 
 
-class Libzmq(AutotoolsPackage):
+class Libzmq(CMakePackage):
     """The ZMQ networking/concurrency library and core API"""
 
     homepage = "http://zguide.zeromq.org/"
@@ -35,11 +35,6 @@ class Libzmq(AutotoolsPackage):
     depends_on("libsodium", when='+libsodium')
     depends_on("libsodium@:1.0.3", when='+libsodium@:4.1.2')
 
-    depends_on('autoconf', type='build', when='@develop')
-    depends_on('automake', type='build', when='@develop')
-    depends_on('libtool', type='build', when='@develop')
-    depends_on('pkgconfig', type='build')
-
     conflicts('%gcc@8:', when='@:4.2.2')
 
     def url_for_version(self, version):
@@ -49,18 +44,13 @@ class Libzmq(AutotoolsPackage):
             url = "https://github.com/zeromq/libzmq/releases/download/v{0}/zeromq-{0}.tar.gz"
         return url.format(version)
 
-    @when('@develop')
-    def autoreconf(self, spec, prefix):
-        bash = which('bash')
-        bash('./autogen.sh')
-
-    def configure_args(self):
-        config_args = []
+    def cmake_args(self):
+        args = []
         if '+libsodium' in self.spec:
-            config_args.append('--with-libsodium')
+            args += ['-WITH_LIBSODIUM=ON']
         if '+draft_api' in self.spec:
-            config_args.append('--enable-drafts')
+            args += ['-DENABLE_DRAFTS=ON']
         if 'clang' in self.compiler.cc:
-            config_args.append("CFLAGS=-Wno-gnu")
-            config_args.append("CXXFLAGS=-Wno-gnu")
-        return config_args
+            args += ["-DCFLAGS=-Wno-gnu"]
+            args += ["-DCXXFLAGS=-Wno-gnu"]
+        return args
